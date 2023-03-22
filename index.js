@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
         const user = { username, id: socket.id, room };
         addUser(user);
 
-        socket.emit("message", formattedMessage(`Hello, ${username}. Welcome to room1`, botName));
+        socket.emit("message", formattedMessage(`Hello, ${username}. Welcome to ${room}.`, botName));
 
         socket.broadcast.to("room1").emit("message", formattedMessage(`${username} has joined the chat`, botName));
         const allUsers = getAllUsers();

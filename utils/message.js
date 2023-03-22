@@ -4,7 +4,7 @@ const formattedMessage = (message, user) => {
     return {
         user,
         message,
-        date: moment().format("h:mm:ss a, D MM YY")
+        date: moment().format("h:mm a, D-MM-YY")
     };
 };
 
