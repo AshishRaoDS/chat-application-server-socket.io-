@@ -4,8 +4,8 @@ const addUser = (user) => {
     allUsers.push(user);
 };
 
-const getAllUsers = () => {
-    return allUsers;
+const getAllUsers = (room) => {
+    return allUsers.filter(user => user.room === room);
 };
 
 const getUser = (socketId) => {

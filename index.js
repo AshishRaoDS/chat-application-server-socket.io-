@@ -6,6 +6,8 @@ const { addUser, getAllUsers, getUser, removeUser } = require('./utils/user');
 
 const app = express();
 
+const PORT = 3000 || process.env.PORT;
+
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
@@ -33,8 +35,8 @@ io.on("connection", (socket) => {
 
         socket.emit("message", formattedMessage(`Hello, ${username}. Welcome to ${room}.`, botName));
 
-        socket.broadcast.to("room1").emit("message", formattedMessage(`${username} has joined the chat`, botName));
-        const allUsers = getAllUsers();
+        socket.broadcast.to(room).emit("message", formattedMessage(`${username} has joined the chat`, botName));
+        const allUsers = getAllUsers(room);
         io.in(room).emit("users", allUsers);
     });
 
@@ -52,13 +54,13 @@ io.on("connection", (socket) => {
         console.log("post removal", remainingUsers);
         const room = remainingUsers?.[0]?.room;
         if (room) {
-            io.in(remainingUsers[0].room).emit("users", remainingUsers);
-            socket.broadcast.to("room1").emit("message", formattedMessage(`${username} has left the chat`, botName));
+            io.in(room).emit("users", remainingUsers);
+            socket.broadcast.to(room).emit("message", formattedMessage(`${username} has left the chat`, botName));
         }
     });
 });
 
-httpServer.listen(3000, () => {
+httpServer.listen(PORT, () => {
     console.log("Listening on port 3000");
 })
 
