@@ -15,8 +15,9 @@ const getUser = (socketId) => {
 
 const removeUser = (socketId) => {
     const usersLeft = allUsers.filter(user => user.id !== socketId);
+    const removedUser = allUsers.filter(user => user.id === socketId)[0];
     allUsers = usersLeft;
-    return allUsers;
+    return { allUsers, removedUser };
 };
 
 module.exports = {
