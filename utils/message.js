@@ -2,9 +2,9 @@ const moment = require("moment");
 
 const formattedMessage = (message, user) => {
     return {
-        user,
+        sender: user,
         message,
-        date: moment().format("h:mm a, D-MM-YY")
+        time: moment().format("h:mm a, D-MM-YY")
     };
 };
 
