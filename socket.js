@@ -42,9 +42,6 @@ async function createSocketConnection(httpServer) {
                 arrayOfAllRoomMessages.push(message)
             }
 
-            console.log('all messages', arrayOfAllRoomMessages)
-
-
             socket.emit("message", formattedMessage(`Hello, ${username}. Welcome to ${room}.`, botName));
             socket.emit("chatHistory", arrayOfAllRoomMessages)
 
@@ -53,13 +50,20 @@ async function createSocketConnection(httpServer) {
             io.in(room).emit("users", allUsers);
         });
 
-        socket.on("message", (data) => {
+        socket.on("deleteChatHistory", async () => {
+            const user = getUser(socket.id);
+            console.log('chat deleting user', user)
+            await messageCollection.deleteMany({})
+            io.to(user.room).emit("deletedHistory", formattedMessage(`${user.username} has deleted the chat absolutely`, botName));
+        })
+
+        socket.on("message", async (data) => {
             const user = getUser(socket.id);
             const messageDetails = formattedMessage(data, user.username);
             messagesArray.push(data);
+            await messageCollection.insertOne({sender: messageDetails.sender, receiver: 'group', message: messageDetails.message, time: messageDetails.time, roomName: user.room})
             io.to(user.room).emit("message", messageDetails);
-            messageCollection.insertOne({sender: messageDetails.user, receiver: 'group', message: messageDetails.message, time: messageDetails.date, roomName: user.room})
-            console.log(messageDetails);
+            console.log(messageDetails); 
         });
 
         socket.on("removeUser", () => {
